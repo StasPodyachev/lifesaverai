@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LifeSaver AI — Autonomous Medical Capsule</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+:root{
+  --fd:"Syne","Helvetica Neue",sans-serif;
+  --fb:"Inter","Helvetica Neue",sans-serif;
+  --txs:clamp(.75rem,.7rem + .25vw,.875rem);
+  --tsm:clamp(.875rem,.8rem + .35vw,1rem);
+  --tb:clamp(1rem,.95rem + .25vw,1.125rem);
+  --tlg:clamp(1.125rem,1rem + .75vw,1.5rem);
+  --txl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+  --t2x:clamp(2rem,1.2rem + 2.5vw,3.5rem);
+  --t3x:clamp(2.5rem,1rem + 4vw,5rem);
+  --thr:clamp(3rem,.5rem + 7vw,8rem);
+  --s1:.25rem;--s2:.5rem;--s3:.75rem;--s4:1rem;--s5:1.25rem;
+  --s6:1.5rem;--s8:2rem;--s10:2.5rem;--s12:3rem;--s16:4rem;
+  --s20:5rem;--s24:6rem;--s32:8rem;
+  --r:9999px;--rl:.75rem;--rx:1rem;--r2x:1.5rem;
+  --ti:180ms cubic-bezier(.16,1,.3,1);
+  --cw:960px;--cww:1200px;
+  /* Dark palette */
+  --bg:#0a0c10;--sf:#0f1218;--sf2:#141820;--sfo:#1a2030;
+  --dv:#1e2535;--br:#243045;
+  --tx:#e8eaf0;--txm:#8892a8;--txf:#4a5270;--txi:#0a0c10;
+  --pr:#00d4ff;--prh:#33ddff;--prg:rgba(0,212,255,.15);--prgs:rgba(0,212,255,.35);
+  --ac:#ff3d5a;--acg:rgba(255,61,90,.2);--gd:#ffd166;
+}
+[data-theme="light"]{
+  --bg:#f5f7fb;--sf:#fff;--sf2:#f0f3f8;--sfo:#e8ecf5;--dv:#dde3ef;--br:#c8d0e4;
+  --tx:#121620;--txm:#4a5270;--txf:#8892a8;--txi:#fff;
+  --pr:#0066cc;--prh:#0052a3;--prg:rgba(0,102,204,.12);--prgs:rgba(0,102,204,.25);
+  --ac:#e0001a;--acg:rgba(224,0,26,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;scroll-behavior:smooth;scroll-padding-top:4rem;hanging-punctuation:first last}
+body{min-height:100dvh;line-height:1.6;font-family:var(--fb);font-size:var(--tb);color:var(--tx);background:var(--bg);overflow-x:hidden}
+img,picture,svg{display:block;max-width:100%;height:auto}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
+h1,h2,h3,h4{font-family:var(--fd);line-height:1.1;text-wrap:balance}
+p{text-wrap:pretty;max-width:70ch}
+a{color:inherit;text-decoration:none;transition:color var(--ti)}
+ul[role="list"],ol[role="list"]{list-style:none}
+input,button,textarea,select{font:inherit;color:inherit}
+::selection{background:oklch(from var(--pr,#00d4ff) l c h / 0.22);color:var(--tx)}
+:focus-visible{outline:2px solid var(--pr);outline-offset:3px;border-radius:var(--rl)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+a,button,[role="button"]{transition:color var(--ti),background var(--ti),border-color var(--ti),box-shadow var(--ti)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--pr);border-radius:var(--r)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:var(--s4) var(--s8);display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(10,12,16,.95) 0%,rgba(10,12,16,0) 100%);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.04);transition:background var(--ti),border-color var(--ti)}
+nav.scr{background:rgba(10,12,16,.98);border-bottom-color:var(--dv)}
+[data-theme="light"] nav.scr{background:rgba(245,247,251,.98)}
+.nl{display:flex;align-items:center;gap:var(--s3)}
+.lt{font-family:var(--fd);font-weight:800;font-size:var(--tb);letter-spacing:-.02em}.lt span{color:var(--pr)}
+.nls{display:flex;align-items:center;gap:var(--s8);list-style:none}.nls a{font-size:var(--tsm);font-weight:500;color:var(--txm);letter-spacing:.02em}.nls a:hover{color:var(--pr)}
+.nr{display:flex;align-items:center;gap:var(--s4)}
+.nc{padding:var(--s2) var(--s5);background:var(--pr);color:var(--txi);font-family:var(--fd);font-weight:700;font-size:var(--tsm);border-radius:var(--r);letter-spacing:.05em;text-transform:uppercase;transition:background var(--ti),box-shadow var(--ti),transform var(--ti)}.nc:hover{background:var(--prh);box-shadow:0 0 20px var(--prgs);transform:translateY(-1px)}
+.thb{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:var(--r);color:var(--txm)}.thb:hover{color:var(--pr);background:var(--sf)}
+.hbtn{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:var(--s2)}.hbtn span{display:block;width:22px;height:2px;background:var(--tx);border-radius:2px;transition:all .3s}
+.mobn{display:none;position:fixed;inset:0;background:rgba(10,12,16,.97);z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:var(--s8)}.mobn.open{display:flex}.mobn a{font-family:var(--fd);font-size:var(--txl);font-weight:700;color:var(--tx)}.mobn a:hover{color:var(--pr)}.mcl{position:absolute;top:var(--s6);right:var(--s6);font-size:var(--txl);color:var(--txm)}
+
+/* HERO */
+.hero{position:relative;min-height:100dvh;display:grid;place-items:center;overflow:hidden;padding:var(--s24) var(--s8) var(--s16)}
+.hbg-wrap{position:absolute;inset:0;z-index:0}.hbg-wrap img{width:100%;height:100%;object-fit:cover;object-position:center;opacity:.45}
+.hbg-wrap::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 60%,rgba(0,212,255,.08) 0%,transparent 70%),linear-gradient(180deg,rgba(10,12,16,.3) 0%,rgba(10,12,16,.5) 40%,rgba(10,12,16,.95) 100%)}
+.hc{position:relative;z-index:1;text-align:center;max-width:900px;margin:0 auto}
+.hbdg{display:inline-flex;align-items:center;gap:var(--s2);padding:var(--s2) var(--s4);border:1px solid rgba(0,212,255,.3);border-radius:var(--r);font-size:var(--txs);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--pr);background:rgba(0,212,255,.06);margin-bottom:var(--s8);opacity:0}
+.bdot{width:6px;height:6px;border-radius:50%;background:var(--pr);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.ht{font-size:var(--thr);font-weight:800;letter-spacing:-.03em;line-height:.95;margin-bottom:var(--s6);opacity:0}
+.ln{display:block;overflow:hidden}
+.hl{background:linear-gradient(135deg,var(--pr) 0%,#0066ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hs{font-size:var(--tlg);font-weight:400;color:var(--txm);max-width:600px;margin:0 auto var(--s10);line-height:1.7;opacity:0}
+/* Hero stats — only product metrics, no investment figures */
+.hsts{display:flex;justify-content:center;gap:var(--s8);margin-bottom:var(--s10);opacity:0;flex-wrap:wrap}
+.hsv{text-align:center;border-left:1px solid var(--dv);padding-left:var(--s8)}.hsv:first-child{border-left:none;padding-left:0}
+.hsvv{font-family:var(--fd);font-size:var(--t2x);font-weight:800;color:var(--pr);line-height:1;margin-bottom:var(--s1)}
+.hsvl{font-size:var(--txs);color:var(--txm);text-transform:uppercase;letter-spacing:.08em}
+.hcts{display:flex;gap:var(--s4);justify-content:center;opacity:0;flex-wrap:wrap}
+.si{position:absolute;bottom:var(--s8);left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:var(--s2);color:var(--txf);font-size:var(--txs);letter-spacing:.1em;text-transform:uppercase;opacity:0;animation:sb 2.5s ease-in-out infinite 2s}
+@keyframes sb{0%,100%{transform:translateX(-50%) translateY(0);opacity:.4}50%{transform:translateX(-50%) translateY(8px);opacity:.8}}
+.sl-line{width:1px;height:40px;background:linear-gradient(180deg,var(--pr) 0%,transparent 100%)}
+
+/* BUTTONS */
+.bp{display:inline-flex;align-items:center;gap:var(--s2);padding:var(--s4) var(--s8);background:var(--pr);color:#0a0c10;font-family:var(--fd);font-weight:700;font-size:var(--tb);border-radius:var(--r);letter-spacing:.03em}.bp:hover{background:var(--prh);box-shadow:0 0 40px var(--prgs);transform:translateY(-2px)}.bp:active{transform:translateY(0)}
+.bo{display:inline-flex;align-items:center;gap:var(--s2);padding:var(--s4) var(--s8);border:1px solid var(--br);color:var(--tx);font-family:var(--fd);font-weight:600;font-size:var(--tb);border-radius:var(--r);letter-spacing:.03em}.bo:hover{border-color:var(--pr);color:var(--pr);background:var(--prg);transform:translateY(-2px)}
+
+/* SECTION */
+section{position:relative;padding:clamp(var(--s16),8vw,var(--s32)) var(--s8)}
+.ct{max-width:var(--cww);margin-inline:auto}.ctd{max-width:var(--cw);margin-inline:auto}
+.sl-lb{display:inline-flex;align-items:center;gap:var(--s2);font-size:var(--txs);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--pr);margin-bottom:var(--s4)}.sl-lb::before{content:"";width:24px;height:1px;background:var(--pr)}
+.stl{font-size:var(--t3x);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-bottom:var(--s4)}
+.sdc{font-size:var(--tlg);color:var(--txm);line-height:1.7;max-width:60ch;margin-bottom:var(--s12)}
+
+/* TICKER */
+.twp{overflow:hidden;background:rgba(0,212,255,.04);border-top:1px solid rgba(0,212,255,.1);border-bottom:1px solid rgba(0,212,255,.1);padding:var(--s3) 0}
+.ttr{display:flex;gap:var(--s12);width:max-content;animation:tk 30s linear infinite}
+.ti{display:flex;align-items:center;gap:var(--s3);font-size:var(--txs);font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.td{width:4px;height:4px;border-radius:50%;background:var(--pr)}
+@keyframes tk{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* PROBLEM */
+.prb{background:var(--sf);border-top:1px solid var(--dv)}
+.prb-g{display:grid;grid-template-columns:1fr 1fr;gap:var(--s16);align-items:center}
+.prb-v{position:relative}
+.prb-i{border-radius:var(--r2x);overflow:hidden;aspect-ratio:4/3;position:relative}
+.prb-i img{width:100%;height:100%;object-fit:cover;filter:saturate(.7) contrast(1.1)}
+.prb-i::after{content:"";position:absolute;inset:0;border-radius:var(--r2x);border:1px solid rgba(255,61,90,.2);box-shadow:0 0 60px rgba(255,61,90,.1) inset;pointer-events:none}
+.scs{position:absolute;bottom:-12px;right:-12px;display:flex;flex-direction:column;gap:var(--s3)}
+.scd{background:rgba(10,12,16,.92);border:1px solid var(--br);border-radius:var(--rl);padding:var(--s3) var(--s4);backdrop-filter:blur(12px);min-width:180px}
+.scdv{font-family:var(--fd);font-size:var(--txl);font-weight:800;color:var(--ac);line-height:1}
+.scdl{font-size:var(--txs);color:var(--txm);margin-top:var(--s1)}
+.ppts{display:flex;flex-direction:column;gap:var(--s6)}
+.ppt{display:flex;gap:var(--s4);align-items:flex-start;opacity:0}
+.ppi{width:40px;height:40px;flex-shrink:0;border-radius:var(--rx);display:flex;align-items:center;justify-content:center;background:var(--acg);border:1px solid rgba(255,61,90,.2);color:var(--ac);margin-top:var(--s1)}
+.pptl{font-family:var(--fd);font-size:var(--tb);font-weight:700;margin-bottom:var(--s1)}
+.pptt{font-size:var(--tsm);color:var(--txm);line-height:1.6;max-width:50ch}
+
+/* SOLUTION */
+.sol{background:var(--bg)}
+.sol-ly{display:grid;grid-template-columns:1fr 1.2fr;gap:var(--s16);align-items:center}
+.sol-fs{display:flex;flex-direction:column;gap:var(--s5)}
+.ft{display:flex;gap:var(--s4);padding:var(--s5);border-radius:var(--rl);border:1px solid var(--dv);background:var(--sf);opacity:0}.ft:hover{border-color:var(--pr);box-shadow:0 0 30px var(--prg);transform:translateX(4px)}
+.fti{width:44px;height:44px;flex-shrink:0;border-radius:var(--rx);display:flex;align-items:center;justify-content:center;background:var(--prg);border:1px solid rgba(0,212,255,.2);color:var(--pr)}
+.ftl{font-family:var(--fd);font-size:var(--tb);font-weight:700;margin-bottom:var(--s1)}
+.ftd{font-size:var(--tsm);color:var(--txm);line-height:1.6}
+.sol-iv{position:relative}
+.sol-iw{border-radius:var(--r2x);overflow:hidden;aspect-ratio:1/1;position:relative}.sol-iw img{width:100%;height:100%;object-fit:cover}.sol-iw::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,212,255,.08) 0%,transparent 70%);pointer-events:none}
+.sol-gl{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,.2) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:gp 4s ease-in-out infinite;z-index:2}
+@keyframes gp{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}}
+.tcb{position:absolute;background:rgba(10,12,16,.9);border:1px solid var(--br);border-radius:var(--rl);padding:var(--s3) var(--s4);backdrop-filter:blur(12px);z-index:3}.tcb.tr{top:var(--s4);right:var(--s4)}.tcb.bl{bottom:var(--s4);left:var(--s4)}
+.tbl{font-size:var(--txs);color:var(--txf);text-transform:uppercase;letter-spacing:.08em}.tbv{font-family:var(--fd);font-size:var(--tb);font-weight:700;color:var(--pr)}
+
+/* PROTOCOL */
+.ptc{background:var(--sf);border-top:1px solid var(--dv);border-bottom:1px solid var(--dv)}
+.ptg{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--s4);margin-top:var(--s12)}
+.pc{background:var(--sf2);border:1px solid var(--dv);border-radius:var(--r2x);padding:var(--s6);text-align:center;position:relative;overflow:hidden;opacity:0}
+.pc::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--pr),transparent);opacity:0;transition:opacity var(--ti)}
+.pc:hover{border-color:var(--pr);transform:translateY(-4px);box-shadow:0 8px 32px var(--prg)}.pc:hover::before{opacity:1}
+.pcl{font-family:var(--fd);font-size:var(--t3x);font-weight:800;color:var(--pr);line-height:1;margin-bottom:var(--s2);opacity:.3;transition:opacity var(--ti)}.pc:hover .pcl{opacity:1}
+.pcn{font-family:var(--fd);font-size:var(--tb);font-weight:700;margin-bottom:var(--s2)}
+.pcd{font-size:var(--txs);color:var(--txm);line-height:1.5}
+.pcc{display:inline-block;margin-top:var(--s3);font-size:var(--txs);font-weight:700;color:var(--gd);background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.2);border-radius:var(--r);padding:2px var(--s3)}
+
+/* COVERAGE */
+.cov{background:var(--bg)}
+.bnum{font-family:var(--fd);font-size:clamp(5rem,15vw,10rem);font-weight:800;letter-spacing:-.05em;line-height:1;background:linear-gradient(135deg,var(--pr) 0%,#0066ff 60%,var(--pr) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:st 4s linear infinite}
+@keyframes st{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.cl{font-size:var(--txl);font-weight:600;color:var(--txm);margin-bottom:var(--s4)}
+.bw{width:100%;height:8px;background:var(--sfo);border-radius:var(--r);overflow:hidden;margin:var(--s6) 0}
+.bf{height:100%;border-radius:var(--r);background:linear-gradient(90deg,var(--pr),#0066ff);width:0%;transition:width 2s cubic-bezier(.16,1,.3,1);box-shadow:0 0 20px var(--prgs)}
+.cmr{display:flex;justify-content:center;gap:var(--s12);margin-top:var(--s10);flex-wrap:wrap}
+.cmi{text-align:center}
+.cmv{font-family:var(--fd);font-size:var(--t2x);font-weight:800}.cmv.gd{color:var(--pr)}.cmv.bd{color:var(--txf);text-decoration:line-through}
+.cml{font-size:var(--txs);color:var(--txm);text-transform:uppercase;letter-spacing:.08em;margin-top:var(--s1)}
+
+/* SCENARIOS */
+.sc{background:var(--sf);border-top:1px solid var(--dv)}
+.scg{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s6);margin-top:var(--s12)}
+.scc{border-radius:var(--r2x);overflow:hidden;border:1px solid var(--dv);background:var(--sf2);padding:var(--s8);opacity:0}.scc:hover{border-color:var(--pr);transform:translateY(-4px);box-shadow:0 12px 40px var(--prg)}
+.scn{font-family:var(--fd);font-size:clamp(3rem,5vw,5rem);font-weight:800;line-height:1;color:var(--txf);margin-bottom:var(--s4)}.scc:hover .scn{color:var(--pr)}
+.sct{font-family:var(--fd);font-size:var(--tlg);font-weight:700;margin-bottom:var(--s3)}
+.sc-desc{font-size:var(--tsm);color:var(--txm);line-height:1.7}
+.sctm{display:inline-flex;align-items:center;gap:var(--s2);margin-top:var(--s4);font-size:var(--txs);font-weight:700;color:var(--pr);text-transform:uppercase;letter-spacing:.08em}
+
+/* MARKET */
+.mkt{background:var(--bg)}
+.mkg{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s6);margin-top:var(--s12)}
+.mc{background:var(--sf);border:1px solid var(--dv);border-radius:var(--r2x);padding:var(--s8);opacity:0}
+.mcs{font-family:var(--fd);font-size:var(--t3x);font-weight:800;color:var(--pr);line-height:1;margin-bottom:var(--s2)}
+.mcc{font-size:var(--tsm);color:var(--gd);font-weight:600;margin-bottom:var(--s3)}
+.mcn{font-family:var(--fd);font-size:var(--tlg);font-weight:700;margin-bottom:var(--s2)}
+.mcd{font-size:var(--tsm);color:var(--txm);line-height:1.6}
+
+/* FOUNDER */
+.fnd{background:linear-gradient(135deg,var(--sf) 0%,rgba(0,212,255,.03) 100%);border-top:1px solid var(--dv);border-bottom:1px solid var(--dv)}
+.fnd-l{display:grid;grid-template-columns:1fr 1.5fr;gap:var(--s16);align-items:center}
+.fnd-iw{position:relative}
+.fnd-p{border-radius:var(--r2x);overflow:hidden;aspect-ratio:3/4;position:relative}.fnd-p img{width:100%;height:100%;object-fit:cover;object-position:top;filter:grayscale(.1) contrast(1.05)}.fnd-p::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(10,12,16,.7) 100%),linear-gradient(135deg,rgba(0,212,255,.06) 0%,transparent 60%);border-radius:var(--r2x);pointer-events:none}
+.fnd-rng{position:absolute;inset:-8px;border-radius:calc(var(--r2x) + 8px);border:1px solid rgba(0,212,255,.2);pointer-events:none}.fnd-rng::after{content:"";position:absolute;inset:-4px;border-radius:calc(var(--r2x) + 12px);border:1px solid rgba(0,212,255,.08)}
+.fnd-q{font-family:var(--fd);font-size:var(--t2x);font-weight:700;letter-spacing:-.02em;line-height:1.25;margin-bottom:var(--s8)}.fnd-q::before{content:"\201C";font-size:5em;line-height:.6;color:var(--pr);opacity:.3;display:block;margin-bottom:var(--s3)}
+.fnd-b{font-size:var(--tb);color:var(--txm);line-height:1.75;max-width:55ch;margin-bottom:var(--s6)}
+.fnd-n{font-family:var(--fd);font-size:var(--tlg);font-weight:800;margin-bottom:var(--s1)}
+.fnd-r{font-size:var(--tsm);color:var(--txm);margin-bottom:var(--s6)}
+.fnd-ls{display:flex;gap:var(--s3);flex-wrap:wrap}
+.fnd-lk{display:inline-flex;align-items:center;gap:var(--s2);padding:var(--s2) var(--s4);font-size:var(--tsm);font-weight:600;border:1px solid var(--br);border-radius:var(--r);color:var(--txm)}.fnd-lk:hover{border-color:var(--pr);color:var(--pr);background:var(--prg)}
+
+/* INVEST — no public financial figures */
+.inv{background:var(--bg)}
+.inv-hero{text-align:center;max-width:680px;margin:0 auto var(--s16)}
+.inv-hero p{margin:0 auto;font-size:var(--tlg);color:var(--txm);line-height:1.7}
+.inv-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s6);margin-bottom:var(--s12)}
+.ivc{background:var(--sf);border:1px solid var(--dv);border-radius:var(--r2x);padding:var(--s8);text-align:center;opacity:0}.ivc:hover{border-color:var(--pr);box-shadow:0 0 40px var(--prg);transform:translateY(-4px)}
+.ivr{font-size:var(--txs);font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--txm);margin-bottom:var(--s4)}
+.ivicon{width:48px;height:48px;border-radius:var(--rx);background:var(--prg);border:1px solid rgba(0,212,255,.2);display:flex;align-items:center;justify-content:center;color:var(--pr);margin:0 auto var(--s4)}
+.ivt{font-family:var(--fd);font-size:var(--tlg);font-weight:700;margin-bottom:var(--s2)}
+.ivd{font-size:var(--tsm);color:var(--txm);line-height:1.6}
+/* Jurisdiction advantages strip */
+.juri{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--s3);margin-bottom:var(--s10)}
+.jurip{display:inline-flex;align-items:center;gap:var(--s2);padding:var(--s2) var(--s4);font-size:var(--tsm);font-weight:600;border:1px solid rgba(0,212,255,.2);border-radius:var(--r);color:var(--txm);background:rgba(0,212,255,.04)}
+.jurip svg{color:var(--pr);flex-shrink:0}
+/* CTA card */
+.inv-cta{background:var(--sf2);border:1px solid rgba(0,212,255,.2);border-radius:var(--r2x);padding:var(--s12);text-align:center;position:relative;overflow:hidden}
+.inv-cta::before{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,.08) 0%,transparent 70%);pointer-events:none}
+.inv-cta-t{font-family:var(--fd);font-size:var(--t2x);font-weight:800;letter-spacing:-.02em;margin-bottom:var(--s4)}
+.inv-cta-s{font-size:var(--tb);color:var(--txm);max-width:50ch;margin:0 auto var(--s8);line-height:1.6}
+.inv-cta-btns{display:flex;gap:var(--s4);justify-content:center;flex-wrap:wrap}
+.nda-note{font-size:var(--txs);color:var(--txf);margin-top:var(--s4);display:flex;align-items:center;justify-content:center;gap:var(--s2)}
+.nda-note svg{color:var(--pr)}
+
+/* CTA SECTION */
+.cta{position:relative;overflow:hidden;text-align:center;background:var(--bg)}.cta::before{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,.12) 0%,transparent 70%);pointer-events:none}
+.cta-c{position:relative;z-index:1}
+.cta-t{font-size:var(--t3x);font-weight:800;letter-spacing:-.03em;margin-bottom:var(--s4)}
+.cta-s{font-size:var(--tlg);color:var(--txm);max-width:50ch;margin:0 auto var(--s10);line-height:1.6}
+.cta-b{display:flex;gap:var(--s4);justify-content:center;flex-wrap:wrap}
+
+/* FOOTER */
+footer{background:var(--sf);border-top:1px solid var(--dv);padding:var(--s12) var(--s8)}
+.ftin{max-width:var(--cww);margin-inline:auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:var(--s8)}
+.ftb p{font-size:var(--tsm);color:var(--txm);line-height:1.7;max-width:30ch;margin-top:var(--s3)}
+.ftc h4{font-family:var(--fd);font-size:var(--tsm);font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--txf);margin-bottom:var(--s4)}
+.ftc ul{list-style:none;display:flex;flex-direction:column;gap:var(--s3)}.ftc a{font-size:var(--tsm);color:var(--txm)}.ftc a:hover{color:var(--pr)}
+.ftbt{max-width:var(--cww);margin:var(--s8) auto 0;padding-top:var(--s6);border-top:1px solid var(--dv);display:flex;justify-content:space-between;align-items:center;font-size:var(--txs);color:var(--txf)}
+.ftd{font-family:var(--fd);font-weight:700;color:var(--pr)}
+
+/* RESPONSIVE */
+@media(max-width:1024px){.prb-g,.sol-ly,.fnd-l{grid-template-columns:1fr}.ptg{grid-template-columns:repeat(3,1fr)}.ftin{grid-template-columns:1fr 1fr}.sol-iv{order:-1}.inv-cols{grid-template-columns:1fr}}
+@media(max-width:768px){
+  nav{padding:var(--s4)}
+  .nls,.nc{display:none}
+  .hbtn{display:flex}
+  .hsts{gap:var(--s4)}
+  .hcts,.cta-b,.inv-cta-btns{flex-direction:column;align-items:center}
+  .scg,.mkg{grid-template-columns:1fr}
+  .ptg{grid-template-columns:repeat(2,1fr)}
+  .scs{position:static;margin-top:var(--s4)}
+  .cmr{gap:var(--s6)}
+  .ftin{grid-template-columns:1fr}
+  .ftbt{flex-direction:column;gap:var(--s3);text-align:center}
+  .juri{gap:var(--s2)}
+}
+@media(max-width:480px){.ptg{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- Skip to content -->
+<a href="#main-content" class="sr-only">Skip to content</a>
+
+<nav id="nav" role="navigation" aria-label="Main navigation">
+<div class="nl">
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-label="LifeSaver AI logo">
+<rect width="32" height="32" rx="8" fill="currentColor" opacity=".05"/>
+<path d="M16 5L7 11v10l9 6 9-6V11L16 5Z" stroke="#00d4ff" stroke-width="1.5" fill="none"/>
+<path d="M16 5v16M7 11l9 5.5 9-5.5" stroke="#00d4ff" stroke-width="1" opacity=".4"/>
+<circle cx="16" cy="16" r="3" fill="#00d4ff"/>
+<path d="M14 16h4M16 14v4" stroke="#0a0c10" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
+<span class="lt">LifeSaver<span>AI</span></span>
+</div>
+<ul class="nls" role="list">
+<li><a href="#prb">Problem</a></li>
+<li><a href="#sol">Solution</a></li>
+<li><a href="#ptc">MARCH</a></li>
+<li><a href="#sc">Scenarios</a></li>
+<li><a href="#fnd">Team</a></li>
+<li><a href="#inv">Invest</a></li>
+</ul>
+<div class="nr">
+<button class="thb" id="thb" aria-label="Switch to light mode" data-theme-toggle>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+</button>
+<a href="#inv" class="nc">Invest</a>
+<button class="hbtn" id="hbtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobn">
+<span></span><span></span><span></span>
+</button>
+</div>
+</nav>
+
+<nav class="mobn" id="mobn" aria-label="Mobile navigation">
+<button class="mcl" id="mcl" aria-label="Close menu">&#x2715;</button>
+<a href="#prb" onclick="closeMobileNav()">Problem</a>
+<a href="#sol" onclick="closeMobileNav()">Solution</a>
+<a href="#ptc" onclick="closeMobileNav()">MARCH Protocol</a>
+<a href="#sc" onclick="closeMobileNav()">Scenarios</a>
+<a href="#fnd" onclick="closeMobileNav()">Team</a>
+<a href="#inv" onclick="closeMobileNav()">Invest</a>
+</nav>
+
+<main id="main-content">
+
+<section class="hero" aria-label="Hero">
+<div class="hbg-wrap">
+<img src="https://res.cloudinary.com/dumesehd6/image/upload/v1774282138/v_v_2_tmw6sn.png" alt="LifeSaver AI autonomous medical capsule in action" width="1920" height="1080" loading="eager" decoding="async"/>
+</div>
+<div class="hc">
+<div class="hbdg" id="hbdg"><span class="bdot" aria-hidden="true"></span> Autonomous Medical Capsule &nbsp;&middot;&nbsp; Pre-Seed Round</div>
+<h1 class="ht" id="ht">
+<span class="ln">Saving Lives</span>
+<span class="ln hl">Where Doctors</span>
+<span class="ln">Can&#8217;t Reach</span>
+</h1>
+<p class="hs" id="hs">An AI-powered amphibious robot that delivers autonomous MARCH protocol care in 3&#8211;5&nbsp;minutes&nbsp;&#8212;&nbsp;no physician required. Terrorist attacks, disasters, and hard-to-reach emergencies.</p>
+<!-- Hero stats: product metrics only — investment figures belong in the pitch deck -->
+<div class="hsts" id="hsts">
+<div class="hsv"><div class="hsvv" data-count="87" data-suffix="%">0%</div><div class="hsvl">Preventable Deaths Covered</div></div>
+<div class="hsv"><div class="hsvv">3&#8211;5 min</div><div class="hsvl">Response Time</div></div>
+<div class="hsv"><div class="hsvv">5&#215;</div><div class="hsvl">Cheaper Than Alternatives</div></div>
+<div class="hsv"><div class="hsvv">5 mo</div><div class="hsvl">To Working Prototype</div></div>
+</div>
+<div class="hcts" id="hcts">
+<a href="mailto:founder@lifesaverai.net?subject=Investment%20Deck%20Request" class="bp">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+Request Investment Deck
+</a>
+<a href="#sol" class="bo">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+How It Works
+</a>
+</div>
+</div>
+<div class="si" id="si" aria-hidden="true"><div class="sl-line"></div>Scroll</div>
+</section>
+
+<div class="twp" aria-hidden="true">
+<div class="ttr">
+<span class="ti"><span class="td"></span>MARCH Protocol Coverage</span>
+<span class="ti"><span class="td"></span>Amphibious All-Terrain Platform</span>
+<span class="ti"><span class="td"></span>NVIDIA Jetson Orin Nano 67 TOPS</span>
+<span class="ti"><span class="td"></span>73&#8211;87% Preventable Deaths Covered</span>
+<span class="ti"><span class="td"></span>Affordable Civilian Market</span>
+<span class="ti"><span class="td"></span>SAS Strasbourg, France</span>
+<span class="ti"><span class="td"></span>Friends &amp; Family Round Open</span>
+<span class="ti"><span class="td"></span>MARCH Protocol Coverage</span>
+<span class="ti"><span class="td"></span>Amphibious All-Terrain Platform</span>
+<span class="ti"><span class="td"></span>NVIDIA Jetson Orin Nano 67 TOPS</span>
+<span class="ti"><span class="td"></span>73&#8211;87% Preventable Deaths Covered</span>
+<span class="ti"><span class="td"></span>Affordable Civilian Market</span>
+<span class="ti"><span class="td"></span>SAS Strasbourg, France</span>
+<span class="ti"><span class="td"></span>Friends &amp; Family Round Open</span>
+</div>
+</div>
+
+<section class="prb" id="prb">
+<div class="ct">
+<div class="prb-g">
+<div class="prb-v">
+<div class="prb-i">
+<img src="https://user-gen-media-assets.s3.amazonaws.com/gemini_images/ad0f80f1-9317-46d8-ba75-9376772e028f.png" alt="Emergency response scenario showing the gap in civilian medical coverage" width="800" height="600" loading="lazy" decoding="async"/>
+</div>
+<div class="scs">
+<div class="scd"><div class="scdv">90%</div><div class="scdl">Terrorist attack deaths from bleeding within first 30 min</div></div>
+<div class="scd"><div class="scdv">+10%</div><div class="scdl">Drop in cardiac arrest survival per minute without care</div></div>
+</div>
+</div>
+<div>
+<p class="sl-lb">The Problem</p>
+<h2 class="stl">Every Minute<br/>Costs Lives</h2>
+<p class="sdc">The Hartford Consensus principle&#8202;&#8212;&#8202;&#8220;no one should die from uncontrolled bleeding&#8221;&#8202;&#8212;&#8202;remains unimplemented. Current emergency systems are fundamentally broken.</p>
+<div class="ppts">
+<div class="ppt">
+<div class="ppi" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+<div><div class="pptl">TEMS Systems Are Critically Understaffed</div><p class="pptt">Tactical Emergency Medical Support requires live medics who are themselves at risk. In mass incidents, casualties far outnumber available medics.</p></div>
+</div>
+<div class="ppt">
+<div class="ppi" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+<div><div class="pptl">Ambulances Wait 20&#8211;60 Minutes</div><p class="pptt">EMS cannot enter an area until police declare it safe. In active shooter scenarios this delay is often fatal&#8202;&#8212;&#8202;cardiac arrest survival drops 10% every minute.</p></div>
+</div>
+<div class="ppt">
+<div class="ppi" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12L12 3l9 9v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+<div><div class="pptl">Remote Areas Are Completely Uncovered</div><p class="pptt">Floods, earthquakes, industrial accidents&#8202;&#8212;&#8202;victims wait hours with no response. Crush syndrome and hypothermia kill within 30 minutes of onset.</p></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="sol" id="sol">
+<div class="ct">
+<div class="sol-ly">
+<div>
+<p class="sl-lb">Our Solution</p>
+<h2 class="stl">The Robot<br/>Paramedic</h2>
+<p class="sdc">LifeSaver AI combines three breakthrough technologies into one system that arrives in 3&#8211;5 minutes without risking human lives.</p>
+<div class="sol-fs">
+<div class="ft">
+<div class="fti" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+<div><div class="ftl">Amphibious Autonomous Chassis</div><p class="ftd">Tracked/wheeled platform, 40&#8211;50 km/h on rough terrain, 3&#8211;5 km/h on water. Navigates floods, rubble, and active-threat zones autonomously.</p></div>
+</div>
+<div class="ft">
+<div class="fti" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+<div><div class="ftl">Full MARCH Medical Module</div><p class="ftd">AED, LUCAS CPR, AutoTQ tourniquet, O2matic oxygen, EZ-IO, Celox hemostatic&#8202;&#8212;&#8202;certified off-the-shelf components.</p></div>
+</div>
+<div class="ft">
+<div class="fti" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+<div><div class="ftl">NVIDIA Jetson Orin Nano AI Brain</div><p class="ftd">67 TOPS edge AI for real-time triage, vital sign monitoring, autonomous procedure execution, and 5G/Starlink telemetry to remote physician.</p></div>
+</div>
+<div class="ft">
+<div class="fti" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+<div><div class="ftl">3&#8211;5 Minute Response Time</div><p class="ftd">From operator call to first medical intervention&#8202;&#8212;&#8202;10&#215; faster than conventional EMS. Scales: 10 capsules = 10 simultaneous patients.</p></div>
+</div>
+</div>
+</div>
+<div class="sol-iv">
+<div class="sol-iw">
+<img src="https://res.cloudinary.com/dumesehd6/image/upload/v1774281567/v2_pgfdiv.png" alt="LifeSaver AI robot — side view of the medical capsule" width="800" height="800" loading="lazy" decoding="async"/>
+<div class="sol-gl" aria-hidden="true"></div>
+</div>
+<div class="tcb tr"><div class="tbl">AI Processor</div><div class="tbv">67 TOPS</div></div>
+<div class="tcb bl"><div class="tbl">Coverage MVP</div><div class="tbv">73&#8211;87%</div></div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="ptc" id="ptc">
+<div class="ct">
+<div style="max-width:var(--cw)">
+<p class="sl-lb">Full Coverage</p>
+<h2 class="stl">MARCH Protocol</h2>
+<p class="sdc">LifeSaver AI MVP automatically executes the complete MARCH protocol&#8202;&#8212;&#8202;the international standard for trauma care in mass-casualty incidents.</p>
+</div>
+<div class="ptg" role="list">
+<div class="pc" role="listitem"><div class="pcl" aria-hidden="true">M</div><div class="pcn">Massive Hemorrhage</div><p class="pcd">AutoTQ automatic tourniquets, Celox RAPID hemostatic dressings, wound packing</p><span class="pcc">100% MVP</span></div>
+<div class="pc" role="listitem"><div class="pcl" aria-hidden="true">A</div><div class="pcn">Airway</div><p class="pcd">AI-assisted airway monitoring; Phase 2: SRIS autonomous intubation</p><span class="pcc">Phase 2</span></div>
+<div class="pc" role="listitem"><div class="pcl" aria-hidden="true">R</div><div class="pcn">Respiration</div><p class="pcd">SPEAR decompression for tension pneumothorax, HyFin chest seals, O2matic PRO</p><span class="pcc">100% MVP</span></div>
+<div class="pc" role="listitem"><div class="pcl" aria-hidden="true">C</div><div class="pcn">Circulation</div><p class="pcd">LUCAS 3.1 automatic CPR, Mindray/Philips AED defibrillation, EZ-IO, EpiPen</p><span class="pcc">100% MVP</span></div>
+<div class="pc" role="listitem"><div class="pcl" aria-hidden="true">H</div><div class="pcn">Hypothermia</div><p class="pcd">Capsule heating, thermal shelter for crush syndrome and flood victims</p><span class="pcc">Partial MVP</span></div>
+</div>
+</div>
+</section>
+
+<section class="cov">
+<div class="ctd" style="text-align:center">
+<p class="sl-lb" style="justify-content:center">Why It Matters</p>
+<div class="bnum" aria-label="73 to 87 percent">73<span style="font-size:.5em">&#8211;</span>87%</div>
+<div class="cl">of preventable civilian deaths covered by MVP</div>
+<div class="bw" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"><div class="bf" id="bf"></div></div>
+<p style="font-size:var(--tsm);color:var(--txm);max-width:55ch;margin:0 auto var(--s8)">Based on statistical analysis of mass casualty incidents&#8202;&#8212;&#8202;terrorist attacks, natural disasters, industrial accidents, and combat zones.</p>
+<div class="cmr">
+<div class="cmi"><div class="cmv gd">3&#8211;5 min</div><div class="cml">LifeSaver AI Response</div></div>
+<div class="cmi"><div class="cmv bd">20&#8211;60 min</div><div class="cml">Standard EMS</div></div>
+<div class="cmi"><div class="cmv gd">5&#8211;10&#215;</div><div class="cml">Cost Advantage vs. Competition</div></div>
+<div class="cmi"><div class="cmv bd">&#8364;150&#8211;300K</div><div class="cml">Nearest Competitor</div></div>
+</div>
+</div>
+</section>
+
+<section class="sc" id="sc">
+<div class="ct">
+<p class="sl-lb">Real-World Use Cases</p>
+<h2 class="stl">Where LifeSaver AI Deploys</h2>
+<p class="sdc">Three scenarios where autonomous medical response changes outcomes from fatal to survivable.</p>
+<div class="scg">
+<div class="scc"><div class="scn" aria-hidden="true">01</div><div class="sct">Terrorist Attack &middot; Shopping Mall</div><p class="sc-desc">A knife attacker injures 8 people. Police cordon the area. LifeSaver AI enters, identifies victims via computer vision, prioritizes by severity, and applies tourniquets while transmitting SAMU telemetry.</p><div class="sctm" aria-label="Response time: 3 to 5 minutes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>3&#8211;5 min response</div></div>
+<div class="scc"><div class="scn" aria-hidden="true">02</div><div class="sct">Mass Brawl &amp; Stampede &middot; Stadium</div><p class="sc-desc">Post-match crush: 15 injured, three critical. Two capsules activate from the parking lot. Capsule 1 performs SPEAR decompression; Capsule 2 stabilizes cardiac arrest. SAMU arrives to stable patients.</p><div class="sctm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>2 capsules &middot; simultaneous</div></div>
+<div class="scc"><div class="scn" aria-hidden="true">03</div><div class="sct">Flood &amp; Earthquake &middot; Disaster Zone</div><p class="sc-desc">Flooded neighborhood with 30+ isolated victims. Amphibious capsules navigate water, delivering IO-access fluids to crush syndrome patients, heating against hypothermia, with Starlink telemetry to command.</p><div class="sctm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Amphibious &middot; all-terrain</div></div>
+</div>
+</div>
+</section>
+
+<section class="mkt" id="mkt">
+<div class="ct">
+<p class="sl-lb">Market Opportunity</p>
+<h2 class="stl">A &#8364;500B+ Market<br/>With No Civilian Leader</h2>
+<p class="sdc">Three converging trends: rising MCI incidents globally, proven robotics technology, and regulatory readiness. LifeSaver AI is the only full-cycle civilian solution.</p>
+<div class="mkg">
+<div class="mc"><div class="mcs">&#8364;575B</div><div class="mcc">&#8593; 11.3% CAGR &#8594; &#8364;982B by 2030</div><div class="mcn">Public Safety &amp; Security</div><p class="mcd">Government agencies and civil defense are leading users. Fast-growing due to rising MCI frequency and government budget prioritization.</p></div>
+<div class="mc"><div class="mcs">$42.2B</div><div class="mcc">&#8593; 14.4% CAGR &#8594; $162B by 2034</div><div class="mcn">Autonomous Emergency Robots</div><p class="mcd">DARPA Triage Challenge proved feasibility. ARTEMIS achieves 99% accuracy in critical patient recognition. Technology readiness is high.</p></div>
+<div class="mc"><div class="mcs">Priority 1</div><div class="mcc">Year 1&#8211;2 target customers</div><div class="mcn">Police &amp; Counter-Terrorism Units</div><p class="mcd">GIGN, RAID (France), GSG-9 (Germany), GEO (Spain), and equivalents in 30+ countries. Municipal police in Paris, London, Berlin for MCI response.</p></div>
+<div class="mc"><div class="mcs">5&#8211;10&#215;</div><div class="mcc">Cost advantage over closest competition</div><div class="mcn">Unique Civilian Positioning</div><p class="mcd">All competitors are military programs at &#8364;150&#8211;300K per unit. LifeSaver AI is the only project targeting the affordable civilian market.</p></div>
+</div>
+</div>
+</section>
+
+<section class="fnd" id="fnd">
+<div class="ct">
+<div class="fnd-l">
+<div class="fnd-iw">
+<div class="fnd-p">
+<img src="https://res.cloudinary.com/dumesehd6/image/upload/v1774281256/A16A3507_giejlt.jpg" alt="Stanislav Podyachev, Founder and CEO of LifeSaver AI" width="918" height="1024" loading="lazy" decoding="async"/>
+</div>
+<div class="fnd-rng" aria-hidden="true"></div>
+</div>
+<div>
+<p class="sl-lb">Founder</p>
+<blockquote class="fnd-q">No one should die from uncontrolled bleeding because help arrived too late.</blockquote>
+<p class="fnd-b">Stanislav Podyachev is the Founder &amp; CEO of LifeSaver AI&#8202;&#8212;&#8202;the world&#8217;s first autonomous medical capsule targeting civilian emergency response. With deep expertise in AI systems, startup strategy, and business development across European tech ecosystems, Stanislav identified the critical gap between military-grade medical robotics and affordable civilian emergency solutions.</p>
+<p class="fnd-b">Operating from Strasbourg, France&#8202;&#8212;&#8202;at the intersection of IRCAD surgical robotics, the University of Strasbourg AI cluster, and Bpifrance&#8217;s deeptech ecosystem&#8202;&#8212;&#8202;he is building LifeSaver AI to become the global standard for autonomous pre-hospital trauma care.</p>
+<div class="fnd-n">Stanislav Podyachev</div>
+<div class="fnd-r">Founder &amp; CEO &nbsp;&#183;&nbsp; LifeSaver AI SAS &nbsp;&#183;&nbsp; Strasbourg, France</div>
+<div class="fnd-ls">
+<a href="https://www.linkedin.com/in/stanislav-podyachev-4a4b5930" target="_blank" rel="noopener noreferrer" class="fnd-lk"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</a>
+<a href="mailto:info@lifesaverai.net" class="fnd-lk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Contact</a>
+<a href="https://lifesaverai.net" target="_blank" rel="noopener noreferrer" class="fnd-lk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>lifesaverai.net</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- INVEST — financial details removed from public page intentionally.
+     Round details, valuation, ROI projections are disclosed under NDA / in the pitch deck only. -->
+<section class="inv" id="inv">
+<div class="ct">
+<p class="sl-lb">Investment Opportunity</p>
+<h2 class="stl">Join the<br/>Pre-Seed Round</h2>
+<div class="inv-hero">
+<p>We are raising a Friends &amp; Family round to fund the working prototype. Financial terms, valuation, equity structure, and projected returns are shared directly with qualified investors under a confidentiality agreement.</p>
+</div>
+
+<div class="inv-cols">
+<div class="ivc">
+<div class="ivr">What You Fund</div>
+<div class="ivicon" aria-hidden="true">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+</div>
+<div class="ivt">Working Prototype</div>
+<p class="ivd">5-month runway to a fully functional LifeSaver AI capsule executing MARCH protocol autonomously. Demonstrable to strategic buyers and institutional investors.</p>
+</div>
+<div class="ivc">
+<div class="ivr">Your Edge</div>
+<div class="ivicon" aria-hidden="true">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+</div>
+<div class="ivt">First-Mover Entry</div>
+<p class="ivd">Pre-seed investors enter at the lowest valuation in the company's history, ahead of a Series A targeting strategic defense and civil protection buyers across Europe.</p>
+</div>
+<div class="ivc">
+<div class="ivr">Structure</div>
+<div class="ivicon" aria-hidden="true">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
+</div>
+<div class="ivt">France SAS &amp; Tax Advantages</div>
+<p class="ivd">Structured as a French SAS with JEI status, CIR 30% R&amp;D cashback, and BSPCE equity incentives. Eligible for Bpifrance co-investment and Horizon Europe grants.</p>
+</div>
+</div>
+
+<!-- Jurisdiction advantages — structural, not sensitive -->
+<div class="juri" role="list" aria-label="French startup advantages">
+<div class="jurip" role="listitem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>CIR 30% R&amp;D cashback</div>
+<div class="jurip" role="listitem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>JEI status</div>
+<div class="jurip" role="listitem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>BSPCE equity incentives</div>
+<div class="jurip" role="listitem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Bpifrance grants eligible</div>
+<div class="jurip" role="listitem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Horizon Europe Cluster 3</div>
+<div class="jurip" role="listitem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Euronext Growth IPO path</div>
+</div>
+
+<div class="inv-cta">
+<div class="inv-cta-t">Get the Full Investment Deck</div>
+<p class="inv-cta-s">Round size, equity terms, valuation, milestone timeline, and financial projections are available to serious investors by request. No public disclosure.</p>
+<div class="inv-cta-btns">
+<a href="mailto:founder@lifesaverai.net?subject=Investment%20Deck%20Request%20%E2%80%94%20LifeSaver%20AI" class="bp">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+Request Investment Deck
+</a>
+<a href="#fnd" class="bo">Meet the Founder</a>
+</div>
+<p class="nda-note">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+Financial details shared under confidentiality. Deck sent within 24 hours.
+</p>
+</div>
+
+</div>
+</section>
+
+<section class="cta">
+<div class="ct cta-c">
+<p class="sl-lb" style="justify-content:center">Act Now</p>
+<h2 class="cta-t">Prototype in 5 Months.<br/>Lives Saved in 6.</h2>
+<p class="cta-s">The technology exists. The market is ready. The regulatory path is clear. LifeSaver AI needs partners who believe no one should die waiting for help that could arrive in 3 minutes.</p>
+<div class="cta-b">
+<a href="mailto:founder@lifesaverai.net?subject=Investment%20Deck%20Request%20%E2%80%94%20LifeSaver%20AI" class="bp">Get the Full Pitch Deck <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+<a href="#fnd" class="bo">Meet the Founder</a>
+</div>
+</div>
+</section>
+
+</main>
+
+<footer role="contentinfo">
+<div class="ftin">
+<div class="ftb">
+<div class="nl">
+<svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor" opacity=".05"/><path d="M16 5L7 11v10l9 6 9-6V11L16 5Z" stroke="#00d4ff" stroke-width="1.5" fill="none"/><circle cx="16" cy="16" r="3" fill="#00d4ff"/><path d="M14 16h4M16 14v4" stroke="#0a0c10" stroke-width="1.5" stroke-linecap="round"/></svg>
+<span class="lt">LifeSaver<span>AI</span></span>
+</div>
+<p>Autonomous medical capsule on an amphibious AI chassis&#8202;&#8212;&#8202;saving lives where doctors can&#8217;t reach in time.</p>
+<p>LifeSaver AI SAS &middot; Strasbourg, France</p>
+</div>
+<div class="ftc"><h4>Product</h4><ul role="list"><li><a href="#sol">Technology</a></li><li><a href="#ptc">MARCH Protocol</a></li><li><a href="#cov">Coverage</a></li><li><a href="#sc">Use Cases</a></li></ul></div>
+<div class="ftc"><h4>Company</h4><ul role="list"><li><a href="#fnd">Founder</a></li><li><a href="#mkt">Market</a></li><li><a href="#inv">Investment</a></li><li><a href="mailto:founder@lifesaverai.net">Contact</a></li></ul></div>
+<div class="ftc"><h4>Contact</h4><ul role="list"><li><a href="mailto:founder@lifesaverai.net">founder@lifesaverai.net</a></li><li><a href="https://www.linkedin.com/in/stanislav-podyachev-4a4b5930" target="_blank" rel="noopener noreferrer">LinkedIn</a></li><li><a href="https://lifesaverai.net" target="_blank" rel="noopener noreferrer">lifesaverai.net</a></li></ul></div>
+</div>
+<div class="ftbt">
+<div>&#169; 2026 LifeSaver AI SAS &middot; Strasbourg, France &middot; Investment details available under NDA</div>
+<div class="ftd">lifesaverai.net</div>
+</div>
+</footer>
+
+<script>
+// Theme toggle
+(function(){
+  var btn = document.getElementById('thb');
+  var root = document.documentElement;
+  var dark = true;
+  root.setAttribute('data-theme','dark');
+  function setTheme(d){
+    dark = d;
+    root.setAttribute('data-theme', d ? 'dark' : 'light');
+    btn.setAttribute('aria-label', d ? 'Switch to light mode' : 'Switch to dark mode');
+    btn.innerHTML = d
+      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  }
+  btn.addEventListener('click', function(){ setTheme(!dark); });
+})();
+
+// Mobile nav
+var mobileNav = document.getElementById('mobn');
+var hbtn = document.getElementById('hbtn');
+hbtn.addEventListener('click', function(){
+  mobileNav.classList.add('open');
+  hbtn.setAttribute('aria-expanded','true');
+});
+document.getElementById('mcl').addEventListener('click', function(){
+  mobileNav.classList.remove('open');
+  hbtn.setAttribute('aria-expanded','false');
+});
+function closeMobileNav(){
+  mobileNav.classList.remove('open');
+  hbtn.setAttribute('aria-expanded','false');
+}
+
+// Nav scroll
+window.addEventListener('scroll', function(){
+  document.getElementById('nav').classList.toggle('scr', scrollY > 80);
+}, {passive: true});
+
+// GSAP Animations
+gsap.registerPlugin(ScrollTrigger);
+var tl = gsap.timeline({defaults:{ease:'power3.out'}});
+tl.to('#hbdg',{opacity:1,y:0,duration:.8,delay:.3})
+  .from('#ht .ln',{y:60,opacity:0,duration:.9,stagger:.12},'-=.3')
+  .to('#hs',{opacity:1,y:0,duration:.7},'-=.4')
+  .to('#hsts',{opacity:1,y:0,duration:.6},'-=.3')
+  .to('#hcts',{opacity:1,y:0,duration:.6},'-=.3')
+  .to('#si',{opacity:1,duration:.6},'-=.2');
+
+// Count-up animation
+function countUp(el, target, suffix){
+  var c=0, step=target/60;
+  var tm = setInterval(function(){
+    c = Math.min(c+step, target);
+    el.textContent = Math.round(c) + suffix;
+    if(c >= target) clearInterval(tm);
+  }, 16);
+}
+document.querySelectorAll('[data-count]').forEach(function(el){
+  var target = parseInt(el.dataset.count);
+  var suffix = el.dataset.suffix || '';
+  ScrollTrigger.create({trigger:el,start:'top 80%',once:true,onEnter:function(){countUp(el,target,suffix);}});
+});
+
+// Progress bar
+ScrollTrigger.create({trigger:'#bf',start:'top 80%',once:true,onEnter:function(){
+  document.getElementById('bf').style.width='80%';
+}});
+
+// Scroll-reveal animations
+gsap.utils.toArray('.ppt').forEach(function(el,i){
+  gsap.to(el,{opacity:1,x:0,duration:.7,delay:i*.15,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 85%',once:true}});
+});
+gsap.utils.toArray('.ft').forEach(function(el,i){
+  gsap.to(el,{opacity:1,x:0,duration:.6,delay:i*.12,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 85%',once:true}});
+});
+gsap.utils.toArray('.pc').forEach(function(el,i){
+  gsap.to(el,{opacity:1,y:0,duration:.5,delay:i*.1,ease:'back.out(1.4)',scrollTrigger:{trigger:el,start:'top 85%',once:true}});
+});
+gsap.utils.toArray('.scc,.mc,.ivc').forEach(function(el,i){
+  gsap.to(el,{opacity:1,y:0,duration:.6,delay:i*.12,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 85%',once:true}});
+});
+</script>
+</body>
+</html>
